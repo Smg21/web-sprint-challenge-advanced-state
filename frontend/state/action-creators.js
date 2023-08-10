@@ -1,7 +1,15 @@
 // ❗ You don't need to add extra action creators to achieve MVP
-export function moveClockwise() { }
 
-export function moveCounterClockwise() { }
+export const MOVE_CLOCKWISE = 'MOVE_CLOCKWISE';
+export const MOVE_COUNTERCLOCKWISE = 'MOVE_COUNTERCLOCKWISE';
+
+export function moveClockwise() { 
+  return { type: MOVE_CLOCKWISE };
+}
+
+export function moveCounterClockwise() { 
+  return { type: MOVE_COUNTERCLOCKWISE };
+}
 
 export function selectAnswer() { }
 
@@ -37,3 +45,4 @@ export function postQuiz() {
   }
 }
 // ❗ On promise rejections, use log statements or breakpoints, and put an appropriate error message in state
+
