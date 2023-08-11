@@ -42,7 +42,7 @@ function Wheel(props) {
             className={`cog ${index === wheelPosition ? 'active' : ''}`}
             style={{ '--i': index }}
           >
-            B
+            {index === wheelPosition ? 'B' : null}
           </div>
         ))}
       </div>
