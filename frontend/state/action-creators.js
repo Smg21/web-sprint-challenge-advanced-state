@@ -1,48 +1,95 @@
-// ❗ You don't need to add extra action creators to achieve MVP
-
 export const MOVE_CLOCKWISE = 'MOVE_CLOCKWISE';
 export const MOVE_COUNTERCLOCKWISE = 'MOVE_COUNTERCLOCKWISE';
+export const SET_QUIZ = 'SET_QUIZ';
 
-export function moveClockwise() { 
+export const SET_INFO_MESSAGE = 'SET_INFO_MESSAGE';
+
+export function moveClockwise() {
   return { type: MOVE_CLOCKWISE };
 }
 
-export function moveCounterClockwise() { 
+export function moveCounterClockwise() {
   return { type: MOVE_COUNTERCLOCKWISE };
 }
 
-export function selectAnswer() { }
+export function setQuiz(quiz) {
+  return {
+    type: SET_QUIZ,
+    payload: quiz,
+  };
+}
 
-export function setMessage() { }
+export const SELECT_ANSWER = 'SELECT_ANSWER';
 
-export function setQuiz() { }
+export function selectAnswer(answerId) { 
+  return {
+    type: SELECT_ANSWER, 
+    payload: answerId,
+  };
+}
 
-export function inputChange() { }
 
-export function resetForm() { }
+export function setInfoMessage(message) {
+  return {
+    type: SET_INFO_MESSAGE,
+    payload: message,
+  };
+}
 
-// ❗ Async action creators
+export function fetchQuizSuccess(quiz) {
+  return {
+    type: SET_QUIZ,
+    payload: quiz,
+  };
+}
+
 export function fetchQuiz() {
-  return function (dispatch) {
-    // First, dispatch an action to reset the quiz state (so the "Loading next quiz..." message can display)
-    // On successful GET:
-    // - Dispatch an action to send the obtained quiz to its state
-  }
-}
-export function postAnswer() {
-  return function (dispatch) {
-    // On successful POST:
-    // - Dispatch an action to reset the selected answer state
-    // - Dispatch an action to set the server message to state
-    // - Dispatch the fetching of the next quiz
-  }
-}
-export function postQuiz() {
-  return function (dispatch) {
-    // On successful POST:
-    // - Dispatch the correct message to the the appropriate state
-    // - Dispatch the resetting of the form
-  }
-}
-// ❗ On promise rejections, use log statements or breakpoints, and put an appropriate error message in state
+  return async function (dispatch) {
+    try {
+      dispatch(setQuiz(null)); 
 
+      const response = await fetch('http://localhost:9000/api/quiz/next');
+      const quiz = await response.json();
+
+      dispatch(fetchQuizSuccess(quiz));
+    } catch (error) {
+      console.error('Error fetching quiz:', error);
+    }
+  };
+}
+
+export function postAnswerSuccess(message) {
+  return {
+    type: SET_INFO_MESSAGE,
+    payload: message,
+  };
+}
+
+export function postAnswer(answerId) {
+  return async function (dispatch) {
+    try {
+      const response = await fetch('http://localhost:9000/api/quiz/answer', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ answer_id: answerId }),
+      });
+
+      const result = await response.json();
+      dispatch(postAnswerSuccess(result.message));
+
+      dispatch(fetchQuiz()); 
+    } catch (error) {
+      console.error('Error posting answer:', error);
+    }
+  };
+}
+
+// export {
+//   fetchQuiz,
+//   selectAnswer,
+//   fetchQuizSuccess,
+//   postAnswer,
+//   postAnswerSuccess,
+// };
