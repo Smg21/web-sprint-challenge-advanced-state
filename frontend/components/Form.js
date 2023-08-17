@@ -1,26 +1,95 @@
-import React from 'react'
-import { connect } from 'react-redux'
-import * as actionCreators from '../state/action-creators'
+import React from 'react';
+import { connect } from 'react-redux';
+import {
+  setNewQuestion,
+  setNewTrueAnswer,
+  setNewFalseAnswer,
+  createQuiz,
+} from '../state/action-creators';
 
-export function Form(props) {
+function Form(props) {
+  const {
+    newQuestion,
+    newTrueAnswer,
+    newFalseAnswer,
+    setNewQuestion,
+    setNewTrueAnswer,
+    setNewFalseAnswer,
+    createQuiz,
+  } = props;
 
-  const onChange = evt => {
+  const handleInputChange = (event, setterFunction) => {
+    setterFunction(event.target.value);
+  };
 
-  }
+  const handleSubmit = (event) => {
+    event.preventDefault();
 
-  const onSubmit = evt => {
+    // Dispatch an action to create a new quiz with the entered values
+    createQuiz({
+      question: newQuestion,
+      trueAnswer: newTrueAnswer,
+      falseAnswer: newFalseAnswer,
+    });
 
-  }
+    // Clear the input fields
+    setNewQuestion('');
+    setNewTrueAnswer('');
+    setNewFalseAnswer('');
+  };
 
   return (
-    <form id="form" onSubmit={onSubmit}>
+    <div>
       <h2>Create New Quiz</h2>
-      <input maxLength={50} onChange={onChange} id="newQuestion" placeholder="Enter question" />
-      <input maxLength={50} onChange={onChange} id="newTrueAnswer" placeholder="Enter true answer" />
-      <input maxLength={50} onChange={onChange} id="newFalseAnswer" placeholder="Enter false answer" />
-      <button id="submitNewQuizBtn">Submit new quiz</button>
-    </form>
-  )
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>
+            Question:
+            <input
+              type="text"
+              value={newQuestion}
+              onChange={(e) => handleInputChange(e, setNewQuestion)}
+            />
+          </label>
+        </div>
+        <div>
+          <label>
+            True Answer:
+            <input
+              type="text"
+              value={newTrueAnswer}
+              onChange={(e) => handleInputChange(e, setNewTrueAnswer)}
+            />
+          </label>
+        </div>
+        <div>
+          <label>
+            False Answer:
+            <input
+              type="text"
+              value={newFalseAnswer}
+              onChange={(e) => handleInputChange(e, setNewFalseAnswer)}
+            />
+          </label>
+        </div>
+        <button type="submit">Create Quiz</button>
+      </form>
+    </div>
+  );
 }
 
-export default connect(st => st, actionCreators)(Form)
+const mapStateToProps = (state) => ({
+  newQuestion: state.form.newQuestion,
+  newTrueAnswer: state.form.newTrueAnswer,
+  newFalseAnswer: state.form.newFalseAnswer,
+});
+
+
+const mapDispatchToProps = {
+  setNewQuestion,
+  setNewTrueAnswer,
+  setNewFalseAnswer,
+  createQuiz,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Form);
