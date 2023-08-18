@@ -61,34 +61,10 @@ export default function Quiz(props) {
         ))}
       </div>
 
-      <button id="submitAnswerBtn" onClick={handleSubmitAnswer}>
+      <button id="submitAnswerBtn" onClick={handleSubmitAnswer}   disabled={selectedAnswer === null}>
         Submit answer
       </button>
     </div>
   );
 }
 
-
-
-
-
-
-
-  // return (
-  //   <div id="quizAnswers">
-  //     {quizData?.answers.map(answer => (
-  //       <div
-  //         key={answer.answer_id} 
-  //         className={`answer ${selectedAnswer === answer.answer_id ? 'selected' : ''}`}
-  //         onClick={() => handleAnswerSelect(answer.answer_id)} 
-  //         data-answer-id={answer.answer_id}
-  //       >
-  //         {answer.text}
-  //         <button>
-  //           {selectedAnswer === answer.answer_id ? 'SELECTED' : 'Select'}
-  //         </button>
-  //       </div>
-  //     ))}
-  //   </div>
-  // );
-  //     }
