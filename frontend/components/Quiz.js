@@ -1,77 +1,63 @@
-import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
-import { fetchQuiz, postAnswer, selectAnswer } from '../state/action-creators';
+import React, { useState, useEffect } from 'react';
 
-function Quiz(props) {
-  const { quiz, fetchQuiz, selectedAnswer, selectAnswer, postAnswer } = props;
+export default function Quiz(props) {
+  const [quizData, setQuizData] = useState(null);
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
 
   useEffect(() => {
-    fetchQuiz();
-  }, [fetchQuiz]);
 
-  const handleAnswerSelect = (answerId) => {
-    if (selectedAnswer === answerId) {
-      selectAnswer(null);
-    } else {
-      selectAnswer(answerId);
-    }
+    fetch('http://localhost:9000/api/quiz/next')
+      .then(response => response.json())
+      .then(data => setQuizData(data))
+      .catch(error => console.error('Error fetching quiz:', error));
+  }, []);
+  const handleAnswerSelect = (answerId, event) => { 
+    console.log('Clicked answer with ID:', answerId);
+    console.log('Event:', event); 
+    setSelectedAnswer(answerId);
   };
-
-  const handleAnswerSubmit = () => {
-    if (selectedAnswer !== null) {
+  const handleSubmitAnswer = () => {
+ 
+    if (quizData && selectedAnswer !== null) {
       const answerData = {
-        quiz_id: quiz.id,
+        quiz_id: quizData.quiz_id,
         answer_id: selectedAnswer,
       };
-      console.log('answerData', answerData); 
-      postAnswer(answerData);
-      selectAnswer(null);
+      fetch('http://localhost:9000/api/quiz/answer', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(answerData),
+      })
+        .then(response => response.json())
+        .then(result => {
+          console.log('Answer submission result:', result);
+          fetch('http://localhost:9000/api/quiz/next')
+            .then(response => response.json())
+            .then(data => setQuizData(data))
+            .catch(error => console.error('Error fetching quiz:', error));
+          setSelectedAnswer(null); 
+        })
+        .catch(error => console.error('Error submitting answer:', error));
     }
   };
 
   return (
-    <div id="wrapper">
-      <h2>{quiz ? quiz.question : 'Loading next quiz...'}</h2>
-
-      <div id="quizAnswers">
-        {quiz &&
-          quiz.answers.map((answer) => (
-            <div
-              key={answer.id}
-              className={`answer ${selectedAnswer === answer.id ? 'selected' : ''}`}
-            >
-              {answer.text}
-              <button
-                onClick={() => handleAnswerSelect(answer.id)}
-                className={`selectButton ${selectedAnswer === answer.id ? 'selected' : ''}`}
-                disabled={selectedAnswer !== null}
-              >
-                {selectedAnswer === answer.id ? 'SELECTED' : 'Select'}
-              </button>
-            </div>
-          ))}
-      </div>
-
-      <button
-        id="submitAnswerBtn"
-        disabled={selectedAnswer === null}
-        onClick={handleAnswerSubmit}
-      >
-        Submit answer
-      </button>
+    <div id="quizAnswers">
+      {quizData?.answers.map(answer => (
+        <div
+          key={answer.answer_id} 
+          className={`answer ${selectedAnswer === answer.answer_id ? 'selected' : ''}`}
+          onClick={() => handleAnswerSelect(answer.answer_id)} 
+          data-answer-id={answer.answer_id}
+        >
+          {answer.text}
+          <button>
+            {selectedAnswer === answer.answer_id ? 'SELECTED' : 'Select'}
+          </button>
+        </div>
+      ))}
     </div>
   );
-}
-
-const mapStateToProps = (state) => ({
-  quiz: state.quiz,
-  selectedAnswer: state.selectedAnswer || null, 
-});
-
-const mapDispatchToProps = {
-  fetchQuiz,
-  postAnswer,
-  selectAnswer,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Quiz);
+      }
