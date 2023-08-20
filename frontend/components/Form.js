@@ -1,41 +1,48 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import {
-  setNewQuestion,
-  setNewTrueAnswer,
-  setNewFalseAnswer,
-  createQuiz,
-} from '../state/action-creators';
+import { createQuiz } from '../state/action-creators';
 
 function Form(props) {
-  const {
-    newQuestion,
-    newTrueAnswer,
-    newFalseAnswer,
-    setNewQuestion,
-    setNewTrueAnswer,
-    setNewFalseAnswer,
-    createQuiz,
-  } = props;
+  const [formData, setFormData] = useState({
+    question: '',
+    trueAnswer: '',
+    falseAnswer: '',
+  });
 
-  const handleInputChange = (event, setterFunction) => {
-    setterFunction(event.target.value);
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // Dispatch an action to create a new quiz with the entered values
-    createQuiz({
-      question: newQuestion,
-      trueAnswer: newTrueAnswer,
-      falseAnswer: newFalseAnswer,
-    });
+    try {
+      // Create a new quiz payload
+      const quizPayload = {
+        question_text: formData.question,
+        true_answer_text: formData.trueAnswer,
+        false_answer_text: formData.falseAnswer,
+      };
 
-    // Clear the input fields
-    setNewQuestion('');
-    setNewTrueAnswer('');
-    setNewFalseAnswer('');
+      // Send the payload to the API to create a new quiz
+      await fetch('http://localhost:9000/api/quiz/new', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(quizPayload),
+      });
+
+      // Clear the input fields
+      setFormData({
+        question: '',
+        trueAnswer: '',
+        falseAnswer: '',
+      });
+    } catch (error) {
+      console.error('Error creating quiz:', error);
+    }
   };
 
   return (
@@ -47,8 +54,9 @@ function Form(props) {
             Question:
             <input
               type="text"
-              value={newQuestion}
-              onChange={(e) => handleInputChange(e, setNewQuestion)}
+              name="question"
+              value={formData.question}
+              onChange={handleInputChange}
             />
           </label>
         </div>
@@ -57,8 +65,9 @@ function Form(props) {
             True Answer:
             <input
               type="text"
-              value={newTrueAnswer}
-              onChange={(e) => handleInputChange(e, setNewTrueAnswer)}
+              name="trueAnswer"
+              value={formData.trueAnswer}
+              onChange={handleInputChange}
             />
           </label>
         </div>
@@ -67,8 +76,9 @@ function Form(props) {
             False Answer:
             <input
               type="text"
-              value={newFalseAnswer}
-              onChange={(e) => handleInputChange(e, setNewFalseAnswer)}
+              name="falseAnswer"
+              value={formData.falseAnswer}
+              onChange={handleInputChange}
             />
           </label>
         </div>
@@ -78,18 +88,4 @@ function Form(props) {
   );
 }
 
-const mapStateToProps = (state) => ({
-  newQuestion: state.form.newQuestion,
-  newTrueAnswer: state.form.newTrueAnswer,
-  newFalseAnswer: state.form.newFalseAnswer,
-});
-
-
-const mapDispatchToProps = {
-  setNewQuestion,
-  setNewTrueAnswer,
-  setNewFalseAnswer,
-  createQuiz,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Form);
+export default connect(null, { createQuiz })(Form);
