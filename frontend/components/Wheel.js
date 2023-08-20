@@ -1,6 +1,3 @@
-
-
-
 import { connect } from 'react-redux';
 import { moveClockwise, moveCounterClockwise, setSelectedAnswer } from '../state/action-creators';
 import React from 'react';

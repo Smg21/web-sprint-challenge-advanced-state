@@ -15,10 +15,7 @@ export default function Quiz(props) {
   }, []);
 
   const handleAnswerSelect = (answerId) => {
-    console.log(
-      'Button class when selected:', // Log the message
-      selectedAnswer === answer.answer_id ? 'SELECTED' : 'Select'
-    );
+console.log(answerId);
     setSelectedAnswer(answerId);
   };
 

@@ -14,6 +14,8 @@ export const setSelectedAnswer = (answerId) => ({
   payload: answerId,
 });
 
+
+
 export const setFormData = (formData) => ({
   type: SET_FORM_DATA,
   payload: formData,
@@ -63,7 +65,6 @@ export function setNewFalseAnswer(newFalseAnswer) {
 }
 
 export function createQuiz(newQuizData) {
-  dispatch(createQuizSuccess(newQuiz));
   return async function (dispatch) {
     try {
       const response = await fetch('http://localhost:9000/api/quiz/new', {
@@ -76,7 +77,7 @@ export function createQuiz(newQuizData) {
 
       if (response.status === 201) {
         const newQuiz = await response.json();
-        dispatch(createQuizSuccess(newQuiz));
+        dispatch(createQuizSuccess(newQuiz)); 
       } else {
         const error = await response.json();
         console.error('Error creating quiz:', error);
