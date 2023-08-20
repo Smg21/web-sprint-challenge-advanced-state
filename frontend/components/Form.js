@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { createQuiz } from '../state/action-creators';
@@ -26,13 +27,7 @@ function Form(props) {
       };
 
       // Send the payload to the API to create a new quiz
-      await fetch('http://localhost:9000/api/quiz/new', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(quizPayload),
-      });
+      await props.createQuiz(quizPayload);
 
       // Clear the input fields
       setFormData({
@@ -44,6 +39,14 @@ function Form(props) {
       console.error('Error creating quiz:', error);
     }
   };
+
+  // const isFormValid = formData.question.trim().length > 0 &&
+  //   formData.trueAnswer.trim().length > 0 &&
+  //   formData.falseAnswer.trim().length > 0;
+  const isFormValid =
+  formData.question.trim().length > 0 &&
+  formData.trueAnswer.trim().length > 0 &&
+  formData.falseAnswer.trim().length > 0;
 
   return (
     <div>
@@ -82,7 +85,7 @@ function Form(props) {
             />
           </label>
         </div>
-        <button type="submit">Create Quiz</button>
+        <button type="submit" disabled={!isFormValid}>Create Quiz</button>
       </form>
     </div>
   );

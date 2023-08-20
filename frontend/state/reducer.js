@@ -10,6 +10,28 @@ import {
   SET_NEW_FALSE_ANSWER,
   CREATE_QUIZ_SUCCESS,
 } from './action-types';
+import { SET_SELECTED_ANSWER, SET_FORM_DATA } from './action-types';
+
+const selectedAnswerReducer = (state = null, action) => {
+  switch (action.type) {
+    case SET_SELECTED_ANSWER:
+      return action.payload;
+    default:
+      return state;
+  }
+};
+
+const formDataReducer = (state = {}, action) => {
+  switch (action.type) {
+    case SET_FORM_DATA:
+      return {
+        ...state,
+        ...action.payload,
+      };
+    default:
+      return state;
+  }
+};
 
 const initialWheelState = 0;
 
@@ -79,4 +101,6 @@ export default combineReducers({
   selectedAnswer,
   infoMessage,
   form,
+  selectedAnswer: selectedAnswerReducer,
+  formData: formDataReducer,
 });
