@@ -123,7 +123,6 @@ export function fetchQuiz() {
     }
   };
 }
-
 export function postAnswerSuccess(message) {
   return {
     type: SET_INFO_MESSAGE,
