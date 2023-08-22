@@ -9,6 +9,9 @@ export const SET_NEW_TRUE_ANSWER = 'SET_NEW_TRUE_ANSWER';
 export const SET_NEW_FALSE_ANSWER = 'SET_NEW_FALSE_ANSWER';
 export const CREATE_QUIZ_SUCCESS = 'CREATE_QUIZ_SUCCESS';
 import { SET_SELECTED_ANSWER, SET_FORM_DATA } from './action-types';
+
+import axios from 'axios';
+
 export const setSelectedAnswer = (answerId) => ({
   type: SET_SELECTED_ANSWER,
   payload: answerId,
@@ -110,19 +113,22 @@ export function fetchQuizSuccess(quiz) {
 }
 
 export function fetchQuiz() {
-  return async function (dispatch) {
-    try {
+  return  function (dispatch) {
+     
       dispatch(setQuiz(null));
 
-      const response = await fetch('http://localhost:9000/api/quiz/next');
-      const quiz = await response.json();
-
-      dispatch(fetchQuizSuccess(quiz));
-    } catch (error) {
+      axios.get('http://localhost:9000/api/quiz/next')
+      .then(quiz => {
+        console.log('quiz',quiz.data);
+        dispatch(fetchQuizSuccess(quiz.data));
+      })
+    
+     .catch (error => {
       console.error('Error fetching quiz:', error);
-    }
+    });
   };
 }
+
 export function postAnswerSuccess(message) {
   return {
     type: SET_INFO_MESSAGE,
