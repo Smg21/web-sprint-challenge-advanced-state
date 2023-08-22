@@ -1,11 +1,30 @@
+import React, { useState, useEffect } from 'react';
 
-import React from 'react';
+export default function Message() {
+  const [message, setMessage] = useState('');
 
-export default function Message(props) {
-  console.log('props.feedbackMessage:', props.feedbackMessage);
-  return (
-    <div id="message" style={{ display: 'block', color: 'red' }}>
-    {props.feedbackMessage}
-  </div>
-  );
+  useEffect(() => {
+    console.log('Fetching message...');
+
+    fetch('http://localhost:9000/api/quiz/answer')
+      .then(response => response.json())
+      .then(data => {
+        console.log('Fetched data:', data);
+
+        if (data.message) {
+          setMessage(data.message);
+          console.log('Message set:', data.message);
+        } else {
+          console.error('Message property not found in response:', data);
+          setMessage('Error: Message property not found in response');
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching message:', error);
+        setMessage('Error fetching message');
+      });
+  }, []);
+
+  return <div id="message">{message}</div>;
 }
+

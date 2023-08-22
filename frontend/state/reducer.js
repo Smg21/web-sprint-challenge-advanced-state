@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+
 import {
   MOVE_CLOCKWISE,
   MOVE_COUNTERCLOCKWISE,
