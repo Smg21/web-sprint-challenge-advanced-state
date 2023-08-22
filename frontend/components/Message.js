@@ -6,10 +6,11 @@ export default function Message() {
   useEffect(() => {
     console.log('Fetching message...');
 
-    fetch('http://localhost:9000/api/quiz/answer')
+    fetch(' http://localhost:9000/api/quiz/next'
+      )
       .then(response => response.json())
       .then(data => {
-        console.log('Fetched data:', data);
+        console.log('Fetched data:', data.message);
 
         if (data.message) {
           setMessage(data.message);
