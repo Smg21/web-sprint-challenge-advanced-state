@@ -112,11 +112,16 @@ export function fetchQuizSuccess(quiz) {
   };
 }
 
-export function fetchQuiz() {
-  return  function (dispatch) {
-     
-      dispatch(setQuiz(null));
+// export function fetchQuizSuccess(quizData) {
+//   return {
+//     type: SET_QUIZ,
+//     payload: quizData,
+//   };
+// }
 
+export function fetchQuiz() {
+  return  function (dispatch) {     
+      dispatch(setQuiz(null));
       axios.get('http://localhost:9000/api/quiz/next')
       .then(quiz => {
         console.log('quiz',quiz.data);

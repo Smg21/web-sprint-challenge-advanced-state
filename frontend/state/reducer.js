@@ -48,6 +48,14 @@ function wheel(state = initialWheelState, action) {
 }
 
 const initialQuizState = null;
+// function quiz(state = initialQuizState, action) {
+//   switch (action.type) {
+//     case SET_QUIZ:
+//       return action.payload;
+//     default:
+//       return state;
+//   }
+// }
 function quiz(state = initialQuizState, action) {
   switch (action.type) {
     case SET_QUIZ:
