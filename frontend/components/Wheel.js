@@ -1,51 +1,25 @@
-import { connect } from 'react-redux';
-import { moveClockwise, moveCounterClockwise, setSelectedAnswer } from '../state/action-creators';
 import React from 'react';
+import { useDispatch } from 'react-redux';
+import { moveClockwise, moveCounterClockwise } from '../state/action-creators';
 
-function Wheel(props) {
-  const { wheelPosition, moveClockwise, moveCounterClockwise, selectedAnswer, setSelectedAnswer } = props;
+function Wheel() {
+  const dispatch = useDispatch();
 
-  const rotateWheel = (direction) => {
-    if (direction === 'clockwise') {
-      moveClockwise();
-    } else if (direction === 'counterclockwise') {
-      moveCounterClockwise();
-    }
+  const handleMoveClockwise = () => {
+    dispatch(moveClockwise());
+  };
+
+  const handleMoveCounterClockwise = () => {
+    dispatch(moveCounterClockwise());
   };
 
   return (
-    <div id="wrapper">
-      <div id="wheel">
-        {[0, 1, 2, 3, 4, 5].map((index) => (
-          <div
-            key={index}
-            className={`cog ${index === wheelPosition ? 'active' : ''}`}
-            style={{ '--i': index }}
-          >
-            {index === wheelPosition ? 'B' : null}
-          </div>
-        ))}
-      </div>
-      <div id="keypad">
-        <button
-          id="counterClockwiseBtn"
-          onClick={() => rotateWheel('counterclockwise')}
-        >
-          Counter clockwise
-        </button>
-        <button id="clockwiseBtn" onClick={() => rotateWheel('clockwise')}>
-          Clockwise
-        </button>
-      </div>
+    <div>
+      <h2>Wheel</h2>
+      <button onClick={handleMoveClockwise}>Move Clockwise</button>
+      <button onClick={handleMoveCounterClockwise}>Move Counterclockwise</button>
     </div>
   );
 }
 
-const mapStateToProps = (state) => {
-  return {
-    wheelPosition: state.wheel,
-    selectedAnswer: state.selectedAnswer,
-  };
-};
-
-export default connect(mapStateToProps, { moveClockwise, moveCounterClockwise, setSelectedAnswer })(Wheel);
+export default Wheel;

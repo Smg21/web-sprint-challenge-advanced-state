@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { connect, useDispatch } from 'react-redux'; 
-import { createQuiz } from '../state/action-creators';
+import { useDispatch } from 'react-redux';
+import { inputChange, resetForm, postQuiz } from '../state/action-creators'; 
 
-function Form(props) {
-  const dispatch = useDispatch(); 
+
+function Form() {
+  const dispatch = useDispatch();
 
   const [formData, setFormData] = useState({
     question: '',
@@ -14,29 +15,36 @@ function Form(props) {
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
+    dispatch(inputChange({ [name]: value })); 
   };
 
+  
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+  
     try {
       const quizPayload = {
         question_text: formData.question,
         true_answer_text: formData.trueAnswer,
         false_answer_text: formData.falseAnswer,
       };
-
-      await dispatch(createQuiz(quizPayload));
-
+  
+  
+      dispatch(resetForm());
+  
       setFormData({
         question: '',
         trueAnswer: '',
         falseAnswer: '',
       });
+  
+     
+      dispatch(postQuiz(quizPayload)); 
     } catch (error) {
       console.error('Error creating quiz:', error);
     }
   };
+
 
   const isFormValid =
     formData.question.trim().length > 0 &&
@@ -88,5 +96,5 @@ function Form(props) {
   );
 }
 
-export default connect(null)(Form); 
+export default Form;
 

@@ -1,5 +1,4 @@
 import { combineReducers } from 'redux';
-
 import {
   MOVE_CLOCKWISE,
   MOVE_COUNTERCLOCKWISE,
@@ -9,30 +8,7 @@ import {
   SET_NEW_QUESTION,
   SET_NEW_TRUE_ANSWER,
   SET_NEW_FALSE_ANSWER,
-  CREATE_QUIZ_SUCCESS,
 } from './action-types';
-import { SET_SELECTED_ANSWER, SET_FORM_DATA } from './action-types';
-
-const selectedAnswerReducer = (state = null, action) => {
-  switch (action.type) {
-    case SET_SELECTED_ANSWER:
-      return action.payload;
-    default:
-      return state;
-  }
-};
-
-const formDataReducer = (state = {}, action) => {
-  switch (action.type) {
-    case SET_FORM_DATA:
-      return {
-        ...state,
-        ...action.payload,
-      };
-    default:
-      return state;
-  }
-};
 
 const initialWheelState = 0;
 
@@ -48,14 +24,7 @@ function wheel(state = initialWheelState, action) {
 }
 
 const initialQuizState = null;
-// function quiz(state = initialQuizState, action) {
-//   switch (action.type) {
-//     case SET_QUIZ:
-//       return action.payload;
-//     default:
-//       return state;
-//   }
-// }
+
 function quiz(state = initialQuizState, action) {
   switch (action.type) {
     case SET_QUIZ:
@@ -77,6 +46,7 @@ function selectedAnswer(state = initialSelectedAnswerState, action) {
 }
 
 const initialMessageState = '';
+
 function infoMessage(state = initialMessageState, action) {
   switch (action.type) {
     case SET_INFO_MESSAGE:
@@ -91,6 +61,7 @@ const initialFormState = {
   newTrueAnswer: '',
   newFalseAnswer: '',
 };
+
 function form(state = initialFormState, action) {
   switch (action.type) {
     case SET_NEW_QUESTION:
@@ -110,6 +81,4 @@ export default combineReducers({
   selectedAnswer,
   infoMessage,
   form,
-  selectedAnswer: selectedAnswerReducer,
-  formData: formDataReducer,
 });
