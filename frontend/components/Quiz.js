@@ -2,15 +2,16 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import * as actioncreators from '../state/action-creators';
 
-// //FUNCTION QUIZ ORIGINAL
+
 function Quiz(props) {
+  console.log('quizData in Quiz component:', props.quizData);
   const { quizData, selectedAnswer, selectAnswer, fetchQuiz, postAnswer } = props;
-  console.log('quizData in Quiz component:',);
 
   useEffect(() => {
-    !quizData && fetchQuiz();
-  }, []);
-
+    if (!quizData) {
+      fetchQuiz();
+    }
+  }, [quizData]);
   // answers 
 
   if (!quizData) {
@@ -55,5 +56,8 @@ function Quiz(props) {
     </div>
   );
 }
+
+
+
 export default connect(st => st, actioncreators)(Quiz);
 

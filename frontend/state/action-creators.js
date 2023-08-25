@@ -112,12 +112,7 @@ export function fetchQuizSuccess(quiz) {
   };
 }
 
-// export function fetchQuizSuccess(quizData) {
-//   return {
-//     type: SET_QUIZ,
-//     payload: quizData,
-//   };
-// }
+
 
 export function fetchQuiz() {
   return  function (dispatch) {     
