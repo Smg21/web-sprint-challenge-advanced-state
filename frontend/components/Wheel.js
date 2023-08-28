@@ -1,45 +1,39 @@
-import React from 'react';
-import { connect } from 'react-redux'; 
+import React from 'react'
+import { connect } from "react-redux"
+import {moveClockwise, moveCounterClockwise} from "../state/action-creators"
 
-import { moveClockwise, moveCounterClockwise } from '../state/action-creators';
+ function Wheel(props) {
 
-const Wheel = (props) => { 
-  const { dispatch, wheel } = props; 
-  const wheelPosition = wheel + 1;
-
-  const handleMoveClockwise = () => {
-    dispatch(moveClockwise());
-  };
-  
-  const handleMoveCounterClockwise = () => {
-    dispatch(moveCounterClockwise());
-  };
-
-  const cogElements = Array.from({ length: 6 }, (_, index) => (
-    <div
-      key={index}
-      className={`cog ${wheelPosition === index + 1 ? 'active' : ''}`}
-      style={{ '--i': index }}
-    >
-      {wheelPosition === index + 1 ? 'B' : null}
-    </div>
-  ));
+  const onClickClockwise = () => {
+    props.moveClockwise()
+   
+   
+  }
+  const onClickCounter = () => {
+    props.moveCounterClockwise()
+  }
 
   return (
     <div id="wrapper">
-      <div id="wheel">{cogElements}</div>
+      <div id="wheel">
+        {props.wheel === 0 ? <div className="cog active" style={{ "--i": 0 }}>B</div> :  <div className="cog" style={{ "--i": 0 }}></div> }
+        {props.wheel === 1 ? <div className="cog active" style={{ "--i": 1 }}>B</div> :  <div className="cog" style={{ "--i": 1 }}></div> }
+        {props.wheel === 2 ? <div className="cog active" style={{ "--i": 2 }}>B</div> :  <div className="cog" style={{ "--i": 2 }}></div> }
+        {props.wheel === 3 ? <div className="cog active" style={{ "--i": 3 }}>B</div> :  <div className="cog" style={{ "--i": 3 }}></div> }
+        {props.wheel === 4 ? <div className="cog active" style={{ "--i": 4 }}>B</div> :  <div className="cog" style={{ "--i": 4 }}></div> }
+        {props.wheel === 5 ? <div className="cog active" style={{ "--i": 5 }}>B</div> :  <div className="cog" style={{ "--i": 5 }}></div> }
+      </div>
       <div id="keypad">
-        <button onClick={handleMoveCounterClockwise}>Counter clockwise</button>
-        <button onClick={handleMoveClockwise}>Clockwise</button>
+        <button onClick={onClickCounter} id="counterClockwiseBtn" >Counter clockwise</button>
+        <button onClick={onClickClockwise} id="clockwiseBtn">Clockwise</button>
       </div>
     </div>
-  );
-};
-
+  )
+}
 const mapStateToProps = (state) => {
   return {
-    wheel: state.wheel,
-  };
-};
+    wheel: state.wheel
 
-export default connect(mapStateToProps)(Wheel); 
+  }
+}
+export default connect(mapStateToProps, {moveClockwise, moveCounterClockwise})(Wheel);

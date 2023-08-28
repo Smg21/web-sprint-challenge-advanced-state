@@ -1,16 +1,15 @@
-import { connect } from 'react-redux';
-import React from 'react';
+import React from 'react'
+import { connect} from "react-redux"
+import setMessage from "../state/reducer"
 
-function Message(props) {
-  return (
-    <div>{props.message}</div>
-  );
+ function Message(props) {
+  return <div id="message">{props.Message}</div>
 }
 
 const mapStateToProps = (state) => {
+  
   return {
-    message: state.infoMessage,
-  };
-};
-
-export default connect(mapStateToProps)(Message);
+    Message: state.setMessage
+  }
+}
+export default connect(mapStateToProps, {setMessage})(Message);

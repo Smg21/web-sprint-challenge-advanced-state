@@ -1,51 +1,132 @@
-import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
-
-import { selectAnswer, fetchQuiz, postAnswer } from '../state/action-creators';
+import React, { useEffect } from "react";
+import { connect } from "react-redux";
+import {
+  fetchQuiz,
+  selectAnswer,
+  postAnswer,
+  selectAnswer2,
+} from "../state/action-creators";
 
 function Quiz(props) {
-  const { quiz, selectedAnswer, selectAnswer, fetchQuiz, postAnswer } = props;
+  console.log(props)
+  const newObj = {
+    quiz_id: props.thisQuiz.quiz_id,
+    answer_id: props.thisAnswer1.answer_id,
+  };
+  const newObj1 = {
+    quiz_id: props.thisQuiz.quiz_id,
+    answer_id: props.thisAnswer2.answer_id,
+  };
+  const onSubmit = (e) => {
+    e.preventDefault();
+
+    props.postAnswer(showSelected());
+    props.selectAnswer2();
+  };
 
   useEffect(() => {
-    if (!quiz) {
-      fetchQuiz();
+    if (props.thisQuiz == "") {
+      props.fetchQuiz();
+    } else {
+      props.thisQuiz;
     }
   }, []);
 
+  const onClick1 = () => {
+    props.selectAnswer();
+    props.selectAnswer2(true);
+  };
+
+  const onClick2 = () => {
+    props.selectAnswer2(true);
+  };
+
+  const showSelected = () => {
+    if (props.selected === false) {
+      return newObj;
+    } else {
+      return newObj1;
+    }
+  };
+
+  const onDisabled = () => {
+    if (props.select === false) {
+      return true;
+    } else {
+      false;
+    }
+  };
   return (
-    <div id="quiz">
-      <div id="quizAnswers">
-        <div className="question">{quiz?.question}</div>
-        {quiz &&
-          quiz.answers.map((answer) => (
-            <div
-              key={answer.answer_id}
-              className={`answer ${selectedAnswer === answer.answer_id ? 'selected' : ''}`}
-              onClick={() => selectAnswer(answer.answer_id)}
-            >
-              <div className="answer-text">{answer.text}</div>
-              <button>
-                {selectedAnswer === answer.answer_id ? 'SELECTED' : 'Select'}
-              </button>
+    <div id="wrapper">
+      {
+        !props.loading ? (
+          <>
+            <h1>{props.thisQuiz.question}</h1>
+            <div id="quizAnswers">
+              {props.select ? (
+                !props.selected ? (
+                  <div className="answer selected">
+                    {props.thisAnswer1.text}
+                    <button onClick={onClick1}>SELECTED</button>
+                  </div>
+                ) : (
+                  <div className="answer ">
+                    {props.thisAnswer1.text}
+                    <button onClick={onClick1}>Select</button>
+                  </div>
+                )
+              ) : (
+                <div className="answer ">
+                  {props.thisAnswer1.text}
+                  <button onClick={onClick1}>Select</button>
+                </div>
+              )}
+              {props.select ? (
+                !props.selected ? (
+                  <div className="answer">
+                    {props.thisAnswer2.text}
+                    <button onClick={onClick1}>Select</button>
+                  </div>
+                ) : (
+                  <div className="answer selected">
+                    {props.thisAnswer2.text}
+                    <button onClick={onClick2}>SELECTED</button>
+                  </div>
+                )
+              ) : (
+                <div className="answer">
+                  {props.thisAnswer2.text}
+                  <button onClick={onClick2}>Select</button>
+                </div>
+              )}
             </div>
-          ))}
-      </div>
-      <button
-        id="submitAnswerBtn"
-        onClick={() => postAnswer({ quiz_id: quiz.quiz_id, answer_id: selectedAnswer })}
-        disabled={selectedAnswer === null || !quiz}
-      >
-        Submit answer
-      </button>
+
+            <button
+              onClick={onSubmit}
+              disabled={onDisabled()}
+              id="submitAnswerBtn"
+            >
+              Submit answer
+            </button>
+          </>
+        ) : (
+          "Loading next quiz..."
+        )
+      }
     </div>
   );
 }
-
 const mapStateToProps = (state) => {
-  return {
-    quiz: state.quiz,
-    selectedAnswer: state.selectedAnswer,
-  };
-};
 
-export default connect(mapStateToProps, { selectAnswer, fetchQuiz, postAnswer })(Quiz);
+  return {
+   thisQuiz: state.quiz,
+   loading: state.loadingReducer,
+   thisAnswer1: state.answerReducer,
+   thisAnswer2: state.answerReducer2,
+   selected: state.selectedAnswer,
+   select: state.selectedAnswer2
+}
+}
+
+
+export default connect(mapStateToProps, {fetchQuiz, selectAnswer, selectAnswer2, postAnswer })(Quiz);

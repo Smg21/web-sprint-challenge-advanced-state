@@ -1,84 +1,115 @@
-import { combineReducers } from 'redux';
-import {
-  MOVE_CLOCKWISE,
-  MOVE_COUNTERCLOCKWISE,
-  SET_QUIZ,
-  SET_INFO_MESSAGE,
-  SELECT_ANSWER,
-  SET_NEW_QUESTION,
-  SET_NEW_TRUE_ANSWER,
-  SET_NEW_FALSE_ANSWER,
-} from './action-types';
+import { combineReducers } from 'redux'
+import * as types from './action-types'
 
-const initialWheelState = 0;
 
+import { LOAD_QUIZ, LOADING, LOAD_ANSWER1, LOAD_ANSWER2, SELECTED, SET_MESSAGE, SET_FORM, RESET_FORM, MOVE_CLOCKWISE, MOVE_COUNTER, SELECTED2 } from "./action-creators";
+
+
+const initialWheelState = 0
 function wheel(state = initialWheelState, action) {
-  switch (action.type) {
+  switch(action.type){
     case MOVE_CLOCKWISE:
-      return (state + 1) % 6;
-    case MOVE_COUNTERCLOCKWISE:
-      return (state + 5) % 6;
-    default:
-      return state;
-  }
+      return state === 5 ? state - 5 : state + 1 
+    
+    case MOVE_COUNTER:
+      return state === 0 ? state + 5 : state - 1;
+  default:
+    return state;
+}
 }
 
-const initialQuizState = null;
-
+const initialQuizState = [];
 function quiz(state = initialQuizState, action) {
-  switch (action.type) {
-    case SET_QUIZ:
-      return action.payload;
+  switch(action.type){
+    case LOAD_QUIZ:
+      return action.payload
+
+    default: 
+    return state;
+  }
+  
+}
+
+const initLoadingState = null;
+
+const loadingReducer = (state = initLoadingState, action) => {
+  switch(action.type){
+    case LOADING:
+      return !state
     default:
       return state;
   }
 }
 
-const initialSelectedAnswerState = null;
 
+const initAnswerData = [];
+
+const answerReducer = (state = initAnswerData, action) => {
+  switch(action.type){
+    case LOAD_ANSWER1:
+      return action.payload
+    
+    default:
+      return state;
+  }
+}
+const initAnswerData2 = [];
+
+const answerReducer2 = (state = initAnswerData2, action) => {
+  switch(action.type){
+  
+    case LOAD_ANSWER2:
+      return action.payload
+    default:
+      return state;
+  }
+}
+
+const initialSelectedAnswerState = "f"
 function selectedAnswer(state = initialSelectedAnswerState, action) {
-  switch (action.type) {
-    case SELECT_ANSWER:
-      return action.payload !== undefined ? action.payload : state;
+  switch(action.type){
+    case SELECTED:
+      return !state
     default:
       return state;
+  }
+  
+}
+
+const initialSelectedAnswerState2 = false
+
+function selectedAnswer2(state = initialSelectedAnswerState2, action) {
+  switch(action.type){
+    case SELECTED2:
+      return state === true ? true : true
+    default:
+      return state
   }
 }
 
-const initialMessageState = '';
-
-function infoMessage(state = initialMessageState, action) {
-  switch (action.type) {
-    case SET_INFO_MESSAGE:
-      return action.payload;
-    default:
-      return state;
+const initialMessageState = ''
+function setMessage(state = initialMessageState, action) {
+  switch(action.type){
+    case SET_MESSAGE:
+      return action.payload
   }
+  return state
+   
+  
 }
 
 const initialFormState = {
   newQuestion: '',
   newTrueAnswer: '',
   newFalseAnswer: '',
-};
-
-function form(state = initialFormState, action) {
-  switch (action.type) {
-    case SET_NEW_QUESTION:
-      return { ...state, newQuestion: action.payload };
-    case SET_NEW_TRUE_ANSWER:
-      return { ...state, newTrueAnswer: action.payload };
-    case SET_NEW_FALSE_ANSWER:
-      return { ...state, newFalseAnswer: action.payload };
-    default:
-      return state;
-  }
 }
-
-export default combineReducers({
-  wheel,
-  quiz,
-  selectedAnswer,
-  infoMessage,
-  form,
-});
+function form(state = initialFormState, action) {
+  switch(action.type){
+    case SET_FORM:
+      return action.payload
+    case RESET_FORM:
+      return action.payload
+  }
+  return state
+}
+export default combineReducers({ wheel, quiz, selectedAnswer, selectedAnswer2, setMessage, form, loadingReducer, answerReducer, answerReducer2 });

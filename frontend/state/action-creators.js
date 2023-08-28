@@ -1,122 +1,116 @@
-export const MOVE_CLOCKWISE = 'MOVE_CLOCKWISE';
-export const MOVE_COUNTERCLOCKWISE = 'MOVE_COUNTERCLOCKWISE';
-export const SELECT_ANSWER = 'SELECT_ANSWER';
-export const SET_INFO_MESSAGE = 'SET_INFO_MESSAGE';
-export const SET_QUIZ = 'SET_QUIZ';
-
-export const INPUT_CHANGE = 'INPUT_CHANGE';
-export const RESET_FORM = 'RESET_FORM';
-
+import * as types from './action-types';
 import axios from 'axios';
 
-export function moveClockwise() {
-  return { type: MOVE_CLOCKWISE };
-}
+export const LOAD_QUIZ = "LOAD_QUIZ";
+export const LOADING = "LOADING";
+export const ERROR = "ERROR";
+export const LOAD_ANSWER1 = "LOAD_ANSWER1"
+export const LOAD_ANSWER2 = "LOAD_ANSWER2"
+export const SELECTED = "SELECTED"
+export const SET_MESSAGE = "SET_MESSAGE"
+export const SET_FORM = "SET_FORM"
+export const RESET_FORM = "RESET_FORM"
+export const MOVE_CLOCKWISE = "MOVE_CLOCKWISE"
+export const MOVE_COUNTER = "MOVE_COUNTER"
+export const SELECTED2 = "SELECTED2"
 
-export function moveCounterClockwise() {
-  return { type: MOVE_COUNTERCLOCKWISE };
-}
-
-export function selectAnswer(answerId) {
+export function moveClockwise(current) {
   return {
-    type: SELECT_ANSWER,
-    payload: answerId,
-  };
+    type: MOVE_CLOCKWISE, payload: current
+  }
+ }
+export function moveCounterClockwise(current) { 
+  return {
+    type: MOVE_COUNTER, payload: current
+  }
+}
+export function selectAnswer() {
+  return {type: SELECTED}
+ }
+
+ export function selectAnswer2(){
+  return {type: SELECTED2}
 }
 
 export function setMessage(message) {
-  return {
-    type: SET_INFO_MESSAGE,
-    payload: message,
-  };
+  return { type: SET_MESSAGE, payload: message}
+ }
+ const loadAnswer1 = (answerData) => {
+  return {type: LOAD_ANSWER1, payload: answerData}
+}
+const loadAnswer2 = (answerData2) => {
+  return {type: LOAD_ANSWER2, payload: answerData2}
 }
 
-export function setQuiz(quiz) {
-  return {
-    type: SET_QUIZ,
-    payload: quiz,
-  };
+export function loadQuiz(quizData) {
+  return { type: LOAD_QUIZ, payload: quizData}
+ }
+ const loading = () => {
+  return {type: LOADING}
 }
 
+export function inputChange() { }
 
+export function setForm(input) {
+  return {type: SET_FORM, payload: input }
+ }
 
-export function inputChange(data) {
-  return {
-    type: INPUT_CHANGE,
-    payload: data,
-  };
-}
+export function resetForm(form) {
+  return {type: RESET_FORM, payload: ""}
+ }
 
-export function resetForm() {
-  return {
-    type: RESET_FORM,
-  };
-}
-
-
-
+// ❗ Async action creators
 export function fetchQuiz() {
   return function (dispatch) {
-    dispatch(setQuiz(null)); 
-    axios.get('http://localhost:9000/api/quiz/next')
-      .then(response => {
-        dispatch(setQuiz(response.data)); 
-      })
-      .catch(error => {
-        console.error('Error fetching quiz:', error);
-      });
-  };
+    // First, dispatch an action to reset the quiz state (so the "Loading next quiz..." message can display)
+    dispatch(loading())
+    axios.get( `http://localhost:9000/api/quiz/next`)
+    // On successful GET:
+    .then(res => {
+      // - Dispatch an action to send the obtained quiz to its state
+      dispatch(loadQuiz(res.data))
+      dispatch(loadAnswer1(res.data.answers[0]))
+      dispatch(loadAnswer2(res.data.answers[1]))
+      dispatch(loading());
+    })
+    .catch(err => {
+      console.log('This is an error message.', err);
+    })
+    
+  }
 }
-
-
-
-
-export function postAnswer(answerData) {
-  return async function (dispatch) {
-    try {
-      const response = await fetch('http://localhost:9000/api/quiz/answer', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(answerData),
-      });
-
-      if (response.status === 200) {
-        const result = await response.json();
-        dispatch(setMessage(result.message)); 
-        dispatch(fetchQuiz()); 
-      } else {
-        const error = await response.json();
-        console.error('Error posting answer:', error);
-      }
-    } catch (error) {
-      console.error('Error posting answer:', error);
-    }
-  };
+export function postAnswer(answer) {
+  return function (dispatch) {
+    // On successful POST:
+    // - Dispatch an action to reset the selected answer state
+    // - Dispatch an action to set the server message to state
+    // - Dispatch the fetching of the next quiz
+    axios.post(`http://localhost:9000/api/quiz/answer`, answer)
+    .then(res => {
+      
+      dispatch(selectAnswer())
+      dispatch(setMessage(res.data.message))
+      dispatch(fetchQuiz())
+      dispatch(selectAnswer2(false))
+     
+    })
+    .catch(err => {
+      console.log(err)
+    })
+  }
 }
-
-export function postQuiz(newQuizData) {
-  return async function (dispatch) {
-    try {
-
-      const response = await fetch('http://localhost:9000/api/quiz/new', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newQuizData),
-      });
-
-      if (response.status === 201) {
-        const newQuiz = await response.json();
-        dispatch(setMessage('Quiz created successfully'));
-      } else {
-        const error = await response.json();
-        console.error('Error creating quiz:', error);
-      }
-    } catch (error) {
-      console.error('Error creating quiz:', error);
-    }
-  };
+export function postQuiz(form) {
+  return function (dispatch) {
+    // On successful POST:
+    // - Dispatch the correct message to the the appropriate state
+    // - Dispatch the resetting of the form
+    axios.post("http://localhost:9000/api/quiz/new", form)
+    .then(res => {
+      dispatch(setMessage(`Congrats: "${res.data.question}" is a great question!`))
+    })
+    .catch(err => {
+      console.log(err)
+    })
+  }
 }
+// ❗ On promise rejections, use log statements or breakpoints, and put an appropriate error message in state
