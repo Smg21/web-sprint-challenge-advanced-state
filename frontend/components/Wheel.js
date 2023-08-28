@@ -1,10 +1,11 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux'; 
+import { connect } from 'react-redux'; 
+
 import { moveClockwise, moveCounterClockwise } from '../state/action-creators';
 
-const Wheel = () => {
-  const dispatch = useDispatch();
-  const wheelPosition = useSelector(state => state.wheel) + 1;
+const Wheel = (props) => { 
+  const { dispatch, wheel } = props; 
+  const wheelPosition = wheel + 1;
 
   const handleMoveClockwise = () => {
     dispatch(moveClockwise());
@@ -35,4 +36,10 @@ const Wheel = () => {
   );
 };
 
-export default Wheel;
+const mapStateToProps = (state) => {
+  return {
+    wheel: state.wheel,
+  };
+};
+
+export default connect(mapStateToProps)(Wheel); 

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import * as actioncreators from '../state/action-creators';
 
+import { selectAnswer, fetchQuiz, postAnswer } from '../state/action-creators';
 
 function Quiz(props) {
   const { quiz, selectedAnswer, selectAnswer, fetchQuiz, postAnswer } = props;
@@ -41,4 +41,11 @@ function Quiz(props) {
   );
 }
 
-export default connect((state) => state, actioncreators)(Quiz);
+const mapStateToProps = (state) => {
+  return {
+    quiz: state.quiz,
+    selectedAnswer: state.selectedAnswer,
+  };
+};
+
+export default connect(mapStateToProps, { selectAnswer, fetchQuiz, postAnswer })(Quiz);

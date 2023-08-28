@@ -1,5 +1,5 @@
-import React from 'react';
 import { connect } from 'react-redux';
+import React from 'react';
 
 function Message(props) {
   return (
@@ -9,7 +9,7 @@ function Message(props) {
 
 const mapStateToProps = (state) => {
   return {
-    message: state.infoMessage 
+    message: state.infoMessage,
   };
 };
 
